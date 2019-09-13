@@ -570,7 +570,7 @@
         var players = [];
         var url = "http://www.bakere.tech/getname.php";
 
-        var xhttp = new XMLHttpRequest();
+        /*var xhttp = new XMLHttpRequest();
         xhttp.open('GET', url);
         xhttp.responseType = 'text';
 
@@ -581,20 +581,20 @@
             if (players.includes(n)) {
                 txt_progress.text = "Name is already in use! Pick something else";
             }
-            else {
+            else {*/
                 menuGroup.forEach(function (item) {
                     item.list[0].text = "";
                 });
 
-                this.sendName();
+                //this.sendName();
 
                 menuGroup = [];
                 menuType = "database";
                 this.createMenu();
-            }
+            /*}
         }.bind(this);
 
-        xhttp.send();
+        xhttp.send();*/
     }
 
     /*checkID() {
