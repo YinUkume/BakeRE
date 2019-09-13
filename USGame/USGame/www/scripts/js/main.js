@@ -112,6 +112,7 @@ var strsb = [];
 var tups = [];
 var mistakesMade = [];
 var intr = [];
+var shortDeb = false;
 
 // Particle variables
 var particles;
