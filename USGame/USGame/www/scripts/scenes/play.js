@@ -708,6 +708,7 @@
     // #region Debriefing
 
     debriefing(lvlNr) {
+        shortDeb = false;
         orderBG.visible = true;
         bg.visible = true;
 
@@ -750,6 +751,30 @@
         debrief.setOrigin(0.5, 0.5);
         debrief.setDepth(105);
         debrief.text = content;
+        debrief.visible = true;
+
+        this.time.delayedCall(4500, function () {
+            orderBG.setInteractive(new Phaser.Geom.Rectangle(0, 0, window.innerWidth, window.innerHeight), Phaser.Geom.Rectangle.Contains);
+        }, [], this);
+    }
+
+    shortDebrief(lvlNr, mistakeType) {
+        shortDeb = true;
+        orderBG.visible = true;
+        bg.visible = true;
+        
+        var mistakeText = [
+            "You made a mistake in the category " + mistakeType + ".",
+            "",
+            tips[mistakeType]
+        ];
+
+        debrief = this.make.text(textconfigMenuOrder);
+        debrief.x = window.innerWidth / 2;
+        debrief.y = window.innerHeight / 2;
+        debrief.setOrigin(0.5, 0.5);
+        debrief.setDepth(105);
+        debrief.text = mistakeText;
         debrief.visible = true;
 
         this.time.delayedCall(4500, function () {
@@ -1389,7 +1414,15 @@
                 this.closeContext();
                 debrief.visible = false;
 
-                this.nextLevel();
+                if (shortDeb === false) {
+                    this.nextLevel();
+                }
+                else {
+                    this.startTimer();
+                    this.enableMenuButtons();
+
+                    orderBG.disableInteractive();
+                }
             }
             else {
                 // Close the context slide
@@ -1716,13 +1749,14 @@
                                 // Userstory exists, but a mistake has been made
                                 mistakeFound = true;
                                 for (var y = 0; y < tups.length; y++) {
-                                    if (tups[y][1]["Role"] === roleText && tups[y][1]["Action"] === actionText && tups[y][1]["Benefit"]) {
+                                    if (tups[y][1]["Role"] === roleText && tups[y][1]["Action"] === actionText && tups[y][1]["Benefit"] === benefitText) {
 
                                         // Add to the list of mistakes made for the debriefing at the end of the level
                                         mistakesMade.push(tups[y]);
+                                        this.userStoryDoesNotExist(lvlNr, tups[y]);
                                     }
                                 }
-                                this.userStoryDoesNotExist(lvlNr);
+                                //this.userStoryDoesNotExist(lvlNr, tups[y]);
                                 return;
                             }
                             else {
@@ -1786,7 +1820,7 @@
                     tup[0] = "Well Formed";
                     tup[1] = us;
                     mistakesMade.push(tup);
-                    this.userStoryDoesNotExist(lvlNr);
+                    this.userStoryDoesNotExist(lvlNr, tup);
                 }
             }
         }
@@ -2070,17 +2104,19 @@
         }, [], this);
     }
 
-    userStoryDoesNotExist(lvlNr) {
+    userStoryDoesNotExist(lvlNr, mistake) {
         // Tell player they made a mistake
         wrongSound.play();
         console.log("Not a valid userstory :(");
+        
+        this.shortDebrief(lvlNr, mistake[0]);
 
         this.emptyMenu();
         times = [];
 
         this.disableMenuButtons();
 
-        this.time.delayedCall(1500, function () {
+        this.time.delayedCall(1000, function () {
             strsr.push(roleText);
             strsa.push(actionText);
             strsb.push(benefitText);
@@ -2126,7 +2162,7 @@
             }, [], this);
         }, [], this);
 
-        titleText.text = "Completed level!";
+        titleText.text = "Level Complete!";
         titleText.visible = true;
 
         this.time.delayedCall(5000, function () {
@@ -2405,8 +2441,8 @@
         console.log(timestring);
         console.log(url);
 
-        var xhttp = new XMLHttpRequest();
-        xhttp.open('GET', url, true);
-        xhttp.send();
+        //var xhttp = new XMLHttpRequest();
+        //xhttp.open('GET', url, true);
+        //xhttp.send();
     }
 }
